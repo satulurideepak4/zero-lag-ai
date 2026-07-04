@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:        #FFFFFF;
+  --bg:        #FFFwhen FFF;
   --bg-soft:   #F7F6FF;
   --bg-footer: #0E0C2A;
 
@@ -1330,7 +1330,7 @@ footer .logo .hl { color: #818CF8; }
         <p class="footer-tagline">A local-first interview copilot. Built by dsbuilds.dev.</p>
       </div>
       <nav class="footer-links" aria-label="Footer navigation">
-        <a href="mailto:satulurideepak4@gmail.com">Contact</a>
+        <a href="mailto:admin@dsbuilds.dev">Contact</a>
         <a href="https://dsbuilds.dev" target="_blank" rel="noopener">dsbuilds.dev</a>
       </nav>
     </div>
@@ -1443,7 +1443,7 @@ footer .logo .hl { color: #818CF8; }
  * 4. Copy the Web app URL and paste it below as SHEET_URL
  */
 (function () {
-  var SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyeoScoe4LZNf9pnSufkGyLTueBmRANa8-XflNKcFxvodeCIw7e5BZAoTZR_-ym0cZBEA/exec';
 
   var form    = document.getElementById('signup-form');
   var input   = document.getElementById('email-input');
@@ -1462,7 +1462,7 @@ footer .logo .hl { color: #818CF8; }
   }
 
   function showSuccess(email) {
-    form.hidden = true;
+    form.style.display = 'none';
     setStatus('');
     scopy.textContent = 'We will email ' + email + ' when access opens.';
     success.classList.add('show');
@@ -1484,37 +1484,29 @@ footer .logo .hl { color: #818CF8; }
       return;
     }
 
-    var btn = form.querySelector('button');
-    btn.disabled = true;
-    btn.textContent = 'Sending...';
-    setStatus('');
+    /* Show success immediately — POST to Google Sheets via hidden form (bypasses CORS) */
+    try { localStorage.setItem('zlai_waitlist', email); } catch (_) {}
+    showSuccess(email);
 
-    var payload = JSON.stringify({ email: email, message: message });
+    if (SHEET_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+      var iframe = document.createElement('iframe');
+      iframe.name = '_sheets_sink';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
 
-    if (SHEET_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-      /* No URL set yet: save locally and show success so you can test the UI */
-      setTimeout(function () {
-        try { localStorage.setItem('zlai_waitlist', email); } catch (_) {}
-        showSuccess(email);
-      }, 500);
-      return;
+      var hf = document.createElement('form');
+      hf.method = 'POST';
+      hf.action = SHEET_URL;
+      hf.target  = '_sheets_sink';
+      hf.style.display = 'none';
+
+      var fe = document.createElement('input'); fe.name = 'email';   fe.value = email;
+      var fm = document.createElement('input'); fm.name = 'message'; fm.value = message;
+      hf.appendChild(fe);
+      hf.appendChild(fm);
+      document.body.appendChild(hf);
+      hf.submit();
     }
-
-    fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload
-    })
-    .then(function () {
-      try { localStorage.setItem('zlai_waitlist', email); } catch (_) {}
-      showSuccess(email);
-    })
-    .catch(function () {
-      btn.disabled = false;
-      btn.textContent = 'Join waitlist';
-      setStatus('Something went wrong. Please try again.', 'error');
-    });
   });
 }());
 </script>
