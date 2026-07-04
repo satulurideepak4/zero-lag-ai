@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZeroLagAI: Your silent assistant for every interview</title>
+<meta name="description" content="ZeroLagAI listens to your interviewer, reads your screen, loads your prep notes, and streams a clear answer in about 1 second. Invisible to screen share. Mac and Windows.">
+<link rel="canonical" href="https://dsbuilds.dev">
+<meta property="og:title" content="ZeroLagAI: Never blank out in an interview again">
+<meta property="og:description" content="Auto voice listening. Screenshot capture. Loads your prep notes. Answers in ~1s. Only you can see it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dsbuilds.dev">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #FFFFFF;
+  --bg-soft:   #F7F6FF;
+  --bg-footer: #0E0C2A;
+
+  --ind:     #4F46E5;
+  --ind-dk:  #3730A3;
+  --ind-lt:  #818CF8;
+  --ind-pl:  #EEF2FF;
+  --ind-dim: rgba(79,70,229,0.09);
+
+  --ora:     #F97316;
+  --ora-dk:  #EA580C;
+  --ora-pl:  #FFF7ED;
+  --ora-dim: rgba(249,115,22,0.10);
+  --ora-glow:rgba(249,115,22,0.35);
+
+  --grn:     #059669;
+  --grn-dim: rgba(5,150,105,0.10);
+  --red:     #DC2626;
+  --red-dim: rgba(220,38,38,0.08);
+
+  --t1:  #0F172A;
+  --t2:  #475569;
+  --t3:  #94A3B8;
+  --t4:  #CBD5E1;
+
+  --bdr:    rgba(15,23,42,0.08);
+  --bdr-md: rgba(15,23,42,0.14);
+
+  --f-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --f-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  --max:  1080px;
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--f-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--f-sans); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; }
+p { line-height: 1.7; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+
+.container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.skip-link { position: absolute; left: -9999px; top: 18px; background: var(--ind); color: #fff; padding: 10px 18px; border-radius: var(--r-sm); font-weight: 700; z-index: 200; }
+.skip-link:focus { left: 24px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--ind); outline-offset: 3px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 13px 26px;
+  font-family: var(--f-sans); font-weight: 700; font-size: 15px;
+  border-radius: var(--r-sm); border: 1.5px solid transparent;
+  text-decoration: none; cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn-cta {
+  background: var(--ora); color: #fff; border-color: var(--ora-dk);
+  box-shadow: 0 4px 16px var(--ora-glow);
+}
+.btn-cta:hover { background: var(--ora-dk); box-shadow: 0 6px 24px var(--ora-glow); }
+.btn-ind { background: var(--ind); color: #fff; border-color: var(--ind-dk); box-shadow: 0 2px 10px rgba(79,70,229,0.3); }
+.btn-ind:hover { background: var(--ind-dk); }
+.btn-outline { background: transparent; border-color: var(--bdr-md); color: var(--t2); }
+.btn-outline:hover { border-color: var(--ind); color: var(--ind); }
+
+/* NAV */
+header.site {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--bdr);
+}
+.nav {
+  max-width: var(--max); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px;
+}
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 18px; letter-spacing: -0.04em; color: var(--t1); }
+.logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--ind), #818CF8); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo-mark svg { display: block; }
+.logo .hl { color: var(--ind); }
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-links a { text-decoration: none; font-size: 14px; font-weight: 600; color: var(--t2); transition: color 0.15s; }
+.nav-links a:hover { color: var(--ind); }
+
+/* HERO */
+.hero {
+  padding: 100px 0 90px;
+  background-color: var(--bg-soft);
+  background-image:
+    radial-gradient(circle at 70% 20%, rgba(79,70,229,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 15% 80%, rgba(129,140,248,0.08) 0%, transparent 40%),
+    radial-gradient(rgba(79,70,229,0.04) 1px, transparent 1px);
+  background-size: auto, auto, 28px 28px;
+  position: relative;
+}
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ind-pl); border: 1px solid rgba(79,70,229,0.2);
+  color: var(--ind); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 999px; margin-bottom: 24px;
+}
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--grn); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hero h1 { font-size: clamp(2.2rem, 4vw, 3.4rem); margin-bottom: 20px; color: var(--t1); }
+.hero h1 .hl {
+  background: linear-gradient(90deg, var(--ind) 0%, #818CF8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-sub { font-size: 17px; color: var(--t2); margin-bottom: 32px; max-width: 50ch; line-height: 1.75; }
+
+.mechanism { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+.mech-step {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg); border: 1px solid var(--bdr);
+  border-radius: var(--r-md); font-size: 14px; font-weight: 500; color: var(--t2);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mech-step:hover { border-color: rgba(79,70,229,0.25); box-shadow: 0 2px 8px rgba(79,70,229,0.07); }
+.mech-step strong { color: var(--t1); font-weight: 700; }
+.mech-ico { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.m1 { background: var(--ind-pl); }
+.m2 { background: var(--grn-dim); }
+.m3 { background: var(--ora-pl); }
+.m4 { background: rgba(5,150,105,0.1); }
+.mech-arrow { margin-left: auto; color: var(--t4); font-size: 14px; }
+
+.hero-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.hero-price-note { font-size: 13px; color: var(--t3); font-weight: 500; }
+.hero-price-note s { color: var(--t4); }
+.hero-price-note strong { color: var(--ora-dk); font-weight: 700; }
+
+/* PRODUCT MOCK */
+.mock-wrap { position: relative; }
+.mock-wrap::before {
+  content: "";
+  position: absolute; top: 5%; right: -10%; bottom: 5%; left: 10%;
+  background: radial-gradient(ellipse, rgba(79,70,229,0.14), transparent 70%);
+  pointer-events: none; z-index: 0; filter: blur(40px);
+}
+.mock {
+  position: relative; z-index: 1;
+  background: #FFFFFF;
+  border: 1.5px solid var(--bdr-md);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(15,23,42,0.04), 0 8px 24px rgba(15,23,42,0.08), 0 32px 80px rgba(79,70,229,0.12);
+}
+.mock-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; background: #F8F8FC; border-bottom: 1px solid var(--bdr);
+}
+.mock-dots { display: flex; gap: 6px; }
+.mock-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.mock-dots span:nth-child(1) { background: #FF5F57; }
+.mock-dots span:nth-child(2) { background: #FFBD2E; }
+.mock-dots span:nth-child(3) { background: #28C840; }
+.mock-label { font-size: 12px; font-weight: 600; color: var(--t3); letter-spacing: 0.02em; }
+.mock-live-pill {
+  margin-left: auto; display: flex; align-items: center; gap: 6px;
+  background: var(--grn-dim); border: 1px solid rgba(5,150,105,0.2); color: var(--grn);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+}
+.mock-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.mock-card { border-radius: 10px; padding: 14px 16px; }
+.mock-card.heard { background: var(--ind-pl); border: 1.5px solid rgba(79,70,229,0.18); }
+.mock-card.answer { background: #FFFBF5; border: 1.5px solid rgba(249,115,22,0.2); }
+.mock-card-label { display: flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.mock-card.heard .mock-card-label { color: var(--ind); }
+.mock-card.answer .mock-card-label { color: var(--ora-dk); }
+.mock-card-label .icon { width: 18px; height: 18px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+.heard .icon { background: rgba(79,70,229,0.15); }
+.answer .icon { background: var(--ora-dim); }
+.mock-transcript { font-size: 13px; color: var(--ind-dk); font-style: italic; line-height: 1.55; }
+.mock-answer-text { font-size: 13px; color: var(--t1); line-height: 1.65; }
+.mock-answer-text p + p { margin-top: 5px; }
+.cursor { display: inline-block; width: 2px; height: 13px; background: var(--ora); vertical-align: text-bottom; animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.mock-divider { display: flex; align-items: center; gap: 10px; }
+.mock-divider-line { flex: 1; height: 1px; background: var(--bdr-md); }
+.mock-divider-tag { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--grn); background: var(--grn-dim); border: 1px solid rgba(5,150,105,0.2); padding: 3px 10px; border-radius: 999px; }
+.mock-footer { display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--bdr); font-family: var(--f-mono); font-size: 10.5px; color: var(--t3); }
+.mock-footer .fast { color: var(--grn); font-weight: 600; }
+
+/* SHARED */
+section { padding: 96px 0; }
+hr.divider { border: none; border-top: 1px solid var(--bdr); }
+
+.kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ind); margin-bottom: 14px; }
+.section-head { max-width: 600px; margin-bottom: 52px; }
+.section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.section-head.center .kicker { justify-content: center; }
+.section-head h2 { font-size: clamp(1.75rem, 3vw, 2.35rem); margin-bottom: 14px; }
+.section-head p { color: var(--t2); font-size: 16px; }
+
+/* TRUST BAR */
+.trust-bar { background: var(--bg); border-top: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr); }
+.trust-inner {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 0;
+  padding: 0;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 36px;
+  border-right: 1px solid var(--bdr);
+  font-size: 14px; font-weight: 600; color: var(--t2);
+}
+.trust-item:last-child { border-right: none; }
+.trust-item .ti-icon { font-size: 18px; }
+.trust-item strong { color: var(--t1); }
+
+/* DEMO SECTION */
+.demo-section { background: var(--bg-soft); padding: 96px 0; }
+
+.demo-stack { display: flex; flex-direction: column; gap: 64px; }
+
+.demo-block {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+.demo-text-col { padding-top: 8px; }
+.demo-block-label {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 12px;
+}
+.demo-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--ind); color: #fff;
+  font-size: 12px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  margin-top: 3px;
+}
+.demo-block-label h3 { font-size: 19px; font-weight: 800; margin: 0; line-height: 1.3; }
+
+.demo-block-sub { color: var(--t2); font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
+
+.chip { font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px; border: 1.5px solid; }
+.chip-ind { color: var(--ind); border-color: rgba(79,70,229,0.25); background: var(--ind-pl); }
+.chip-grn { color: var(--grn); border-color: rgba(5,150,105,0.25); background: var(--grn-dim); }
+.chip-ora { color: var(--ora-dk); border-color: rgba(249,115,22,0.25); background: var(--ora-pl); }
+.demo-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+
+.demo-feat-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.demo-feat-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; color: var(--t2); line-height: 1.5; }
+.dfl-chk {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--grn-dim); border: 1px solid rgba(5,150,105,0.22);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+
+/* typing demo mockup */
+.type-mock {
+  background: #0F172A;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(15,23,42,0.22), 0 2px 8px rgba(15,23,42,0.10);
+}
+.type-mock-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.type-mock-q {
+  background: rgba(79,70,229,0.15); border: 1px solid rgba(79,70,229,0.2);
+  border-radius: 10px; padding: 13px 15px;
+}
+.type-mock-q-label { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(129,140,248,0.8); margin-bottom: 7px; display: flex; align-items: center; gap: 5px; }
+.type-mock-q-text { font-family: var(--f-mono); font-size: 13px; color: #C7D2FE; line-height: 1.5; }
+.type-mock-q-cursor { display: inline-block; width: 7px; height: 13px; background: #818CF8; vertical-align: middle; margin-left: 2px; animation: blink 1s step-end infinite; border-radius: 1px; }
+.type-mock-a {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 13px 15px;
+}
+.type-mock-a-label { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(249,115,22,0.8); margin-bottom: 7px; }
+.type-mock-a-text { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.65; }
+.type-mock-a-text em { color: #34D399; font-style: normal; }
+.type-mock-input-row {
+  display: flex; gap: 8px; align-items: center;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 10px 14px; margin-top: 4px;
+}
+.type-mock-input-placeholder { font-family: var(--f-mono); font-size: 12px; color: rgba(255,255,255,0.25); flex: 1; }
+.type-mock-send {
+  background: var(--ind); color: #fff; border: none;
+  font-size: 11px; font-weight: 700; padding: 5px 12px;
+  border-radius: 5px; cursor: default; letter-spacing: 0.03em;
+}
+
+.demo-gif-wrap {
+  background: #0F172A;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(15,23,42,0.22), 0 2px 8px rgba(15,23,42,0.10);
+}
+.demo-gif-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.demo-gif-dots { display: flex; gap: 5px; }
+.demo-gif-dots span { width: 8px; height: 8px; border-radius: 50%; }
+.demo-gif-dots span:nth-child(1) { background: #FF5F57; }
+.demo-gif-dots span:nth-child(2) { background: #FFBD2E; }
+.demo-gif-dots span:nth-child(3) { background: #28C840; }
+.demo-gif-title { font-size: 10px; color: rgba(255,255,255,0.3); font-family: var(--f-mono); }
+.demo-gif-live { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; color: #34D399; letter-spacing: 0.06em; text-transform: uppercase; }
+.demo-gif-live-dot { width: 5px; height: 5px; border-radius: 50%; background: #34D399; animation: pulse 2s ease-in-out infinite; }
+
+.demo-gif-frame {
+  position: relative;
+  height: 420px;
+  background: #0F172A;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.demo-gif-frame.portrait {
+  height: auto;
+  aspect-ratio: 832 / 739;
+}
+.demo-gif-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.demo-gif-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(255,255,255,0.3); font-size: 13px; }
+
+/* FEATURES GRID */
+.feat-section { background: var(--bg); }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat-card {
+  background: var(--bg-soft);
+  border: 1.5px solid var(--bdr);
+  border-radius: var(--r-lg);
+  padding: 28px 26px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.feat-card:hover { border-color: rgba(79,70,229,0.25); box-shadow: 0 6px 24px rgba(79,70,229,0.08); transform: translateY(-2px); }
+.feat-icon { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 21px; margin-bottom: 18px; }
+.fi-ind { background: var(--ind-pl); }
+.fi-grn { background: var(--grn-dim); }
+.fi-ora { background: var(--ora-pl); }
+.fi-blu { background: rgba(59,130,246,0.1); }
+.fi-pur { background: rgba(168,85,247,0.1); }
+.fi-red { background: var(--red-dim); }
+.feat-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.feat-card p { font-size: 13.5px; color: var(--t2); line-height: 1.65; }
+
+/* HOW IT WORKS */
+.how-section { background: var(--bg-soft); }
+.steps-list { display: flex; flex-direction: column; gap: 0; max-width: 780px; }
+.step-row { display: grid; grid-template-columns: 64px 1fr; gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--bdr); position: relative; }
+.step-row:last-child { border-bottom: none; }
+.step-left { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.step-circle { width: 48px; height: 48px; border-radius: 50%; background: var(--ind); color: #fff; font-size: 17px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 3px 10px rgba(79,70,229,0.3); }
+.step-line { flex: 1; width: 2px; background: var(--bdr); margin: 6px 0 0; }
+.step-row:last-child .step-line { display: none; }
+.step-body { padding-top: 10px; }
+.step-body h3 { font-size: 18px; margin-bottom: 10px; }
+.step-body p { color: var(--t2); font-size: 14.5px; line-height: 1.7; }
+.step-chip { margin-top: 14px; background: var(--bg); border: 1px solid var(--bdr); border-radius: 8px; padding: 11px 14px; font-family: var(--f-mono); font-size: 12px; color: var(--t3); line-height: 1.7; display: inline-block; }
+.step-chip .hi   { color: var(--ind); }
+.step-chip .hi-g { color: var(--grn); }
+.step-chip .hi-o { color: var(--ora-dk); }
+
+/* COMPARISON */
+.compare-section { background: var(--bg); }
+.compare-table { width: 100%; border-collapse: collapse; border-radius: var(--r-lg); overflow: hidden; border: 1.5px solid var(--bdr-md); }
+.compare-table thead th { padding: 20px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; text-align: left; }
+.compare-table thead th:first-child { background: var(--bg-soft); color: var(--t3); width: 22%; }
+.compare-table thead th.col-us { background: var(--ind); color: #fff; }
+.compare-table thead th.col-them { background: var(--bg-soft); color: var(--t2); }
+.compare-table tbody tr { border-top: 1px solid var(--bdr); }
+.compare-table tbody tr:hover td { background-color: rgba(79,70,229,0.02); }
+.compare-table tbody td { padding: 16px 24px; font-size: 14px; line-height: 1.6; vertical-align: top; }
+.compare-table tbody td:first-child { font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--t3); background: var(--bg-soft); }
+.compare-table tbody td.col-us { color: var(--t1); font-weight: 500; background: var(--ind-pl); }
+.compare-table tbody td.col-them { color: var(--t2); background: var(--bg); }
+.win { color: var(--grn); font-weight: 700; }
+.lose { color: var(--red); }
+
+/* PRICING */
+.price-section { background: var(--bg-soft); }
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  max-width: 860px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+.price-card {
+  width: 100%;
+  background: var(--bg); border: 2px solid var(--bdr-md);
+  border-radius: var(--r-xl); padding: 40px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15,23,42,0.06), 0 20px 60px rgba(79,70,229,0.06);
+  cursor: default;
+  transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+}
+.price-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--bdr-md); transition: background 0.22s; }
+.price-card:hover {
+  border-color: rgba(79,70,229,0.45);
+  box-shadow: 0 2px 8px rgba(15,23,42,0.06), 0 24px 70px rgba(79,70,229,0.18);
+  transform: translateY(-4px);
+}
+.price-card:hover::before { background: linear-gradient(90deg, var(--ind), var(--ind-lt)); }
+.price-card.featured {
+  border-color: rgba(79,70,229,0.38);
+  box-shadow: 0 2px 8px rgba(15,23,42,0.06), 0 24px 64px rgba(79,70,229,0.16);
+}
+.price-card.featured::before { background: linear-gradient(90deg, var(--ind), var(--ind-lt)); }
+.price-badge { display: inline-flex; align-items: center; gap: 7px; background: linear-gradient(90deg, rgba(249,115,22,0.12), rgba(234,88,12,0.08)); border: 1px solid rgba(249,115,22,0.3); color: var(--ora-dk); font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; margin-bottom: 24px; }
+.price-badge.pop { background: linear-gradient(90deg, rgba(79,70,229,0.14), rgba(79,70,229,0.08)); border-color: rgba(79,70,229,0.35); color: var(--ind); }
+.price-name { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--t3); margin-bottom: 10px; }
+.price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+.price-was { font-size: 22px; font-weight: 700; color: var(--t4); text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 2px; }
+.price-now { font-size: 48px; font-weight: 800; color: var(--t1); letter-spacing: -0.04em; }
+.price-period { font-size: 15px; color: var(--t3); }
+.price-tagline { color: var(--t2); font-size: 14px; line-height: 1.65; margin-bottom: 24px; min-height: 66px; }
+.price-tagline strong { color: var(--ora-dk); font-weight: 700; }
+.price-card.featured .price-tagline strong { color: var(--ind); }
+.price-session-note { text-align: center; margin-top: 14px; font-size: 12.5px; color: var(--t3); }
+.price-feats { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-direction: column; gap: 12px; }
+.price-feats li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--t2); }
+.chk { width: 20px; height: 20px; border-radius: 50%; background: var(--grn-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.price-card .btn { width: 100%; }
+.price-fair-use { font-size: 12px; color: var(--t3); text-align: center; margin-top: 10px; }
+
+/* FAQ */
+.faq-section { background: var(--bg); }
+.faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+.faq-item {
+  border: 1.5px solid var(--bdr);
+  border-radius: var(--r-md);
+  background: var(--bg-soft);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.faq-item.open { border-color: rgba(79,70,229,0.28); }
+.faq-q {
+  width: 100%; text-align: left;
+  padding: 20px 24px; background: transparent; border: none; cursor: pointer;
+  font-family: var(--f-sans); font-size: 15.5px; font-weight: 700; color: var(--t1);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  transition: color 0.15s;
+}
+.faq-q:hover { color: var(--ind); }
+.faq-q .faq-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bdr); display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.25s; }
+.faq-item.open .faq-q .faq-icon { background: var(--ind-pl); transform: rotate(45deg); }
+.faq-icon svg { transition: stroke 0.15s; }
+.faq-item.open .faq-q .faq-icon svg { stroke: var(--ind); }
+.faq-a { display: none; padding: 0 24px 20px; font-size: 14.5px; color: var(--t2); line-height: 1.75; }
+.faq-item.open .faq-a { display: block; }
+
+/* SIGNUP */
+.signup-section { background: var(--bg-soft); }
+.signup-center { max-width: 580px; margin: 0 auto; text-align: center; }
+.signup-form {
+  display: flex; flex-direction: column;
+  background: var(--bg); border: 1.5px solid var(--bdr-md);
+  border-radius: var(--r-lg); overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(15,23,42,0.07);
+}
+.signup-form:focus-within { border-color: var(--ind); box-shadow: 0 0 0 3px var(--ind-dim); }
+.signup-form input[type="email"] {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid var(--bdr);
+  color: var(--t1); font-size: 15px; font-family: var(--f-sans);
+  padding: 16px 18px;
+}
+.signup-form input::placeholder { color: var(--t3); }
+.signup-form input:focus { outline: none; }
+.signup-form textarea {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid var(--bdr);
+  color: var(--t1); font-size: 14px; font-family: var(--f-sans);
+  padding: 14px 18px; resize: none; min-height: 88px; line-height: 1.6;
+}
+.signup-form textarea::placeholder { color: var(--t3); }
+.signup-form textarea:focus { outline: none; }
+.signup-form .btn { border-radius: 0; border: none; padding: 16px 24px; width: 100%; font-size: 16px; }
+.form-status { min-height: 20px; font-size: 13px; color: var(--t3); }
+.form-status.error { color: var(--red); }
+.signup-trust { display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; margin-top: 18px; font-size: 13px; color: var(--t3); }
+.signup-trust span { display: flex; align-items: center; gap: 6px; }
+.signup-success { display: none; background: var(--grn-dim); border: 1.5px solid rgba(5,150,105,0.22); border-radius: var(--r-md); padding: 22px 24px; align-items: center; gap: 14px; text-align: left; }
+.signup-success.show { display: flex; }
+.signup-success strong { display: block; margin-bottom: 3px; font-weight: 700; }
+.signup-success span { color: var(--t2); font-size: 14px; }
+
+/* SCROLL ANIMATIONS */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.fade-up.visible { opacity: 1; transform: none; }
+
+/* FOOTER */
+footer.site { background: var(--bg-footer); padding: 56px 0 36px; }
+footer .logo { color: #fff; }
+footer .logo .hl { color: #818CF8; }
+.footer-tagline { color: rgba(255,255,255,0.4); font-size: 14px; margin-top: 8px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 36px; margin-bottom: 36px; }
+.footer-links { display: flex; gap: 26px; flex-wrap: wrap; }
+.footer-links a { text-decoration: none; color: rgba(255,255,255,0.5); font-size: 14.5px; transition: color 0.15s; }
+.footer-links a:hover { color: #fff; }
+.footer-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: rgba(255,255,255,0.3); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero { padding: 72px 0 64px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero h1 { font-size: 2.2rem; }
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .demo-block { grid-template-columns: 1fr; gap: 24px; }
+  .nav-links { display: none; }
+  .price-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .price-card.featured { transform: none; }
+  .demo-gif-frame { height: 300px; }
+}
+@media (max-width: 640px) {
+  section { padding: 64px 0; }
+  .trust-inner { flex-direction: column; gap: 0; }
+  .trust-item { border-right: none; border-bottom: 1px solid var(--bdr); width: 100%; justify-content: center; }
+  .trust-item:last-child { border-bottom: none; }
+  .feat-grid { grid-template-columns: 1fr; }
+  .demo-stack { gap: 48px; }
+  .compare-table { font-size: 13px; }
+  .compare-table tbody td, .compare-table thead th { padding: 12px 14px; }
+  .price-card { padding: 28px 22px; }
+  .price-now { font-size: 42px; }
+  .signup-form { flex-direction: column; }
+  .signup-form .btn { border-radius: 0 0 var(--r-md) var(--r-md); }
+  .footer-inner { flex-direction: column; }
+  .step-row { grid-template-columns: 48px 1fr; gap: 16px; }
+  .demo-gif-frame { height: 240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+  .fade-up { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- NAV -->
+<header class="site" role="banner">
+  <div class="nav">
+    <a class="logo" href="#top" aria-label="ZeroLagAI home">
+      <div class="logo-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M4 12L8 3.5L12 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.5 9H10.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Zero<span class="hl">Lag</span>AI
+    </a>
+    <nav class="nav-links" aria-label="Site navigation">
+      <a href="#demo">Demo</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-cta" href="#signup" style="padding:10px 20px;font-size:14px;">Get early access</a>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="top" aria-labelledby="h1">
+  <div class="container">
+    <div class="hero-inner">
+
+      <div>
+        <div class="hero-badge">
+          <span class="live-dot" aria-hidden="true"></span>
+          Private beta &middot; limited spots
+        </div>
+
+        <h1 id="h1">
+          Your interviewer just asked.<br>The answer is <span class="hl">already there.</span>
+        </h1>
+
+        <p class="hero-sub">
+          ZeroLagAI hears your interviewer, reads your screen, and loads your prep notes. A clear answer streams in about 1 second. Only you can see it. Zoom and Meet cannot.
+        </p>
+
+        <div class="mechanism" role="list" aria-label="How ZeroLagAI works">
+          <div class="mech-step" role="listitem">
+            <span class="mech-ico m1" aria-hidden="true">🎧</span>
+            <span><strong>Listens</strong> to your interviewer, automatically</span>
+            <span class="mech-arrow" aria-hidden="true">&#8594;</span>
+          </div>
+          <div class="mech-step" role="listitem">
+            <span class="mech-ico m2" aria-hidden="true">🖥</span>
+            <span><strong>Captures</strong> screen problems or you type anything manually</span>
+            <span class="mech-arrow" aria-hidden="true">&#8594;</span>
+          </div>
+          <div class="mech-step" role="listitem">
+            <span class="mech-ico m4" aria-hidden="true">📖</span>
+            <span><strong>Loads</strong> your Markdown prep notes as context</span>
+            <span class="mech-arrow" aria-hidden="true">&#8594;</span>
+          </div>
+          <div class="mech-step" role="listitem">
+            <span class="mech-ico m3" aria-hidden="true">&#10003;</span>
+            <span><strong>Answers</strong> in about 1 second, invisible to screen share</span>
+          </div>
+        </div>
+
+        <div class="hero-cta">
+          <a class="btn btn-cta" href="#signup">Get early access</a>
+          <p class="hero-price-note"><s>$30</s> <strong>$20/mo</strong> &middot; 10 sessions &middot; cancel anytime</p>
+        </div>
+        <p style="margin-top:12px;font-size:13px;color:var(--t3);">Mac and Windows. Nothing needed on the interviewer's side.</p>
+      </div>
+
+      <div class="mock-wrap" aria-hidden="true">
+        <div class="mock">
+          <div class="mock-bar">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <span class="mock-label">zerolagai</span>
+            <div class="mock-live-pill">
+              <span class="live-dot"></span>
+              Live
+            </div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-card heard">
+              <div class="mock-card-label">
+                <span class="icon">🎧</span>
+                Interviewer said
+              </div>
+              <p class="mock-transcript">"Can you write a function that finds two numbers in an array that sum to a target value?"</p>
+            </div>
+
+            <div class="mock-divider">
+              <div class="mock-divider-line"></div>
+              <div class="mock-divider-tag">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 3.2V5.5L7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                processing
+              </div>
+              <div class="mock-divider-line"></div>
+            </div>
+
+            <div class="mock-card answer">
+              <div class="mock-card-label">
+                <span class="icon">&#10022;</span>
+                Answer
+              </div>
+              <div class="mock-answer-text">
+                <p>Use a hash map to store each value's index as you iterate. For each element, check if <em>target - nums[i]</em> already exists in the map.</p>
+                <p>Single pass. O(n) time, O(n) space.<span class="cursor"></span></p>
+              </div>
+            </div>
+
+            <div class="mock-footer">
+              <span>invisible to screen share</span>
+              <span>answered in <span class="fast">1.1s</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar" role="list" aria-label="Key facts">
+  <div class="container">
+    <div class="trust-inner">
+      <div class="trust-item" role="listitem">
+        <span class="ti-icon" aria-hidden="true">&#9889;</span>
+        <span><strong>~1 second</strong> to first answer word</span>
+      </div>
+      <div class="trust-item" role="listitem">
+        <span class="ti-icon" aria-hidden="true">&#128274;</span>
+        <span><strong>Invisible</strong> to Zoom, Meet, Teams, OBS</span>
+      </div>
+      <div class="trust-item" role="listitem">
+        <span class="ti-icon" aria-hidden="true">&#128196;</span>
+        <span><strong>4 ways in:</strong> voice, screenshot, type, notes</span>
+      </div>
+      <div class="trust-item" role="listitem">
+        <span class="ti-icon" aria-hidden="true">&#128184;</span>
+        <span><strong>$2 per interview</strong> at early access</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- DEMO SECTION -->
+<section class="demo-section" id="demo" aria-labelledby="demo-h">
+  <div class="container">
+    <div class="section-head center fade-up">
+      <span class="kicker">See it in action</span>
+      <h2 id="demo-h">Real recordings. Not a mockup.</h2>
+      <p>These are actual screen captures of ZeroLagAI during use. No staging, no edits.</p>
+    </div>
+
+    <div class="demo-stack">
+
+      <!-- Demo 1: Voice -->
+      <div class="demo-block fade-up">
+        <div class="demo-text-col">
+          <div class="demo-block-label">
+            <div class="demo-num" aria-hidden="true">1</div>
+            <h3>Listens and answers automatically. No button, ever.</h3>
+          </div>
+          <p class="demo-block-sub">Your interviewer finishes speaking. ZeroLagAI detects the silence and streams a clear answer before your nerves catch up. You do nothing. No shortcut, no click, no trigger.</p>
+          <div class="demo-chips">
+            <span class="chip chip-ind">Auto speech detection</span>
+            <span class="chip chip-grn">~1s to first word</span>
+            <span class="chip chip-ora">Streams word by word</span>
+          </div>
+          <ul class="demo-feat-list">
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Continuous audio monitoring throughout the interview
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Detects when the question ends, fires pipeline instantly
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Answer appears in a private overlay on your screen only
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Session history kept so follow-up questions have full context
+            </li>
+          </ul>
+        </div>
+        <div class="demo-gif-wrap">
+          <div class="demo-gif-bar">
+            <div class="demo-gif-dots"><span></span><span></span><span></span></div>
+            <span class="demo-gif-title">zerolagai / voice-answering-demo</span>
+            <span class="demo-gif-live"><span class="demo-gif-live-dot"></span>Recording</span>
+          </div>
+          <div class="demo-gif-frame portrait" id="gif-frame-1">
+            <div class="demo-gif-loading" id="gif-load-1" aria-hidden="true">
+              <span style="font-size:28px;">🎙</span>
+              <span>Loading demo...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo 2: Type manually -->
+      <div class="demo-block fade-up">
+        <div class="demo-text-col">
+          <div class="demo-block-label">
+            <div class="demo-num" aria-hidden="true">2</div>
+            <h3>Or type any question manually and get an instant answer.</h3>
+          </div>
+          <p class="demo-block-sub">Not everything gets spoken out loud. If you spot a question on a slide, a whiteboard, or just want to ask something from your own head, type it in and press enter. Full AI answer in seconds.</p>
+          <div class="demo-chips">
+            <span class="chip chip-ind">&#8984;Enter to focus input</span>
+            <span class="chip chip-grn">Same ~1s response</span>
+            <span class="chip chip-ora">Works alongside voice</span>
+          </div>
+          <ul class="demo-feat-list">
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Useful when the question appears on screen, not spoken
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Works alongside voice mode, both can be active at once
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Your prep notes and session history still apply
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              One shortcut to focus the input, enter to fire
+            </li>
+          </ul>
+        </div>
+        <div class="type-mock">
+          <div class="demo-gif-bar">
+            <div class="demo-gif-dots"><span></span><span></span><span></span></div>
+            <span class="demo-gif-title">zerolagai / manual-input</span>
+            <span class="demo-gif-live"><span class="demo-gif-live-dot"></span>Live</span>
+          </div>
+          <div class="type-mock-body">
+            <div class="type-mock-q">
+              <div class="type-mock-q-label">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><rect x="1" y="1" width="8" height="8" rx="1.5" stroke="rgba(129,140,248,0.7)" stroke-width="1.3"/><path d="M3 4h4M3 6h2.5" stroke="rgba(129,140,248,0.7)" stroke-width="1.1" stroke-linecap="round"/></svg>
+                You typed
+              </div>
+              <div class="type-mock-q-text">What is the difference between a process and a thread, and when would you use each?<span class="type-mock-q-cursor"></span></div>
+            </div>
+            <div class="type-mock-a">
+              <div class="type-mock-a-label">&#10022; Answer</div>
+              <div class="type-mock-a-text">
+                A <em>process</em> is an isolated program with its own memory space. A <em>thread</em> is a unit of execution within a process, sharing memory with other threads in the same process.<br><br>
+                Use threads when tasks need to share data cheaply (e.g. a web server handling concurrent requests). Use separate processes when isolation matters (e.g. browser tabs, microservices).
+              </div>
+            </div>
+            <div class="type-mock-input-row">
+              <span class="type-mock-input-placeholder">Type your question here...</span>
+              <button class="type-mock-send" aria-hidden="true" tabindex="-1">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo 3: MD file -->
+      <div class="demo-block fade-up">
+        <div class="demo-text-col">
+          <div class="demo-block-label">
+            <div class="demo-num" aria-hidden="true">3</div>
+            <h3>Load your prep notes. AI uses them for every answer.</h3>
+          </div>
+          <p class="demo-block-sub">Drop in any Markdown file before the interview. Your Java cheatsheet, system design templates, company research. ZeroLagAI reads the full file and applies it as context to every answer in the session.</p>
+          <div class="demo-chips">
+            <span class="chip chip-grn">Any .md file</span>
+            <span class="chip chip-ind">Your notes, your context</span>
+            <span class="chip chip-ora">Per-role, per-company</span>
+          </div>
+          <ul class="demo-feat-list">
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Load your Java guide for one interview, system design notes for the next
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              The AI reads the full file, not just keywords
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Applied to every voice, screenshot, and typed question
+            </li>
+            <li>
+              <span class="dfl-chk" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              Answers feel grounded in your prep, not generic
+            </li>
+          </ul>
+        </div>
+        <div class="demo-gif-wrap">
+          <div class="demo-gif-bar">
+            <div class="demo-gif-dots"><span></span><span></span><span></span></div>
+            <span class="demo-gif-title">zerolagai / md-reference-demo</span>
+            <span class="demo-gif-live"><span class="demo-gif-live-dot"></span>Recording</span>
+          </div>
+          <div class="demo-gif-frame" id="gif-frame-2">
+            <div class="demo-gif-loading" id="gif-load-2" aria-hidden="true">
+              <span style="font-size:28px;">📖</span>
+              <span>Loading demo...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FEATURES -->
+<section class="feat-section" aria-labelledby="feat-h">
+  <div class="container">
+    <div class="section-head fade-up">
+      <span class="kicker">Features</span>
+      <h2 id="feat-h">Everything built around one question:</h2>
+      <p>What would actually help someone think more clearly under pressure? Every feature answers that.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card fade-up">
+        <div class="feat-icon fi-ind" aria-hidden="true">🎧</div>
+        <h3>Automatic voice detection</h3>
+        <p>Listens continuously to system audio. Detects when your interviewer finishes speaking and fires the answer pipeline. Zero buttons required.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon fi-grn" aria-hidden="true">🖥</div>
+        <h3>Screenshot capture</h3>
+        <p>Press a shortcut and drag a region. Any coding problem, SQL schema, system diagram, or chart on your screen gets analyzed in the same pipeline.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon fi-ora" aria-hidden="true">📖</div>
+        <h3>Markdown reference files</h3>
+        <p>Load your prep guide as a .md file before the session starts. The AI applies it as context to every answer. Your Java notes, system design templates, company research.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon fi-pur" aria-hidden="true">&#128274;</div>
+        <h3>Invisible to screen share</h3>
+        <p>The overlay uses OS-level screen protection and is excluded from all screen capture APIs. Zoom, Meet, Teams, and OBS cannot see it. It appears only on your physical display.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon fi-blu" aria-hidden="true">&#9889;</div>
+        <h3>Streaming answers</h3>
+        <p>The first word appears in about a second. The full answer streams word by word, so you start reading while it is still being generated and waste no time.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon fi-grn" aria-hidden="true">&#9000;</div>
+        <h3>Type any question manually</h3>
+        <p>Not everything is spoken. If a question appears on a slide or you just want to ask something directly, one shortcut focuses the input and you type it in. Same fast answer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how" aria-labelledby="how-h">
+  <div class="container">
+    <div class="section-head fade-up">
+      <span class="kicker">How it works</span>
+      <h2 id="how-h">Set it up once. It handles the rest.</h2>
+      <p>ZeroLagAI is a desktop app on your own machine. No account login mid-interview, no cloud dependency. Configure it once, then forget the setup exists.</p>
+    </div>
+
+    <div class="steps-list fade-up">
+      <div class="step-row">
+        <div class="step-left">
+          <div class="step-circle">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Start the app and set your context</h3>
+          <p>Launch ZeroLagAI before the call. Optionally load a Markdown reference file with your prep notes. Set your system audio to BlackHole (Mac) or Stereo Mix (Windows) so the app hears your interviewer through system audio, not your mic.</p>
+          <span class="step-chip">
+            optional: <span class="hi-o">load</span> any .md prep file<br>
+            <span class="hi-g">one-time</span> audio routing setup
+          </span>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-left">
+          <div class="step-circle">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Feed it the question any way you need</h3>
+          <p>Voice detection runs automatically. For anything visual on screen, press <kbd style="font-family:var(--f-mono);background:var(--bg);border:1px solid var(--bdr);padding:1px 5px;border-radius:4px;">&#8984;S</kbd> to enter capture mode, then select the region you want. You can take multiple screenshots in one go: a diagram, then a code block, then a schema. When you are done selecting, click <strong>Ask</strong> and all of them get analyzed together. For anything you want to type yourself, one shortcut opens the manual input.</p>
+          <span class="step-chip">
+            <span class="hi-g">auto</span> voice, no trigger needed<br>
+            <span class="hi">&#8984;S</span> capture mode, select any region, multi-shot<br>
+            click <span class="hi-o">Ask</span> when done to submit all screenshots<br>
+            <span class="hi">&#8984;Enter</span> to type a question manually
+          </span>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <div class="step-left">
+          <div class="step-circle">3</div>
+        </div>
+        <div class="step-body">
+          <h3>A clear answer streams into the overlay</h3>
+          <p>The first word appears in about a second. The full answer streams word by word directly into a quiet overlay on your screen. It is excluded from all screen capture APIs so only you can see it. Lean on it fully or use it just to jog your memory.</p>
+          <span class="step-chip">
+            <span class="hi-g">invisible</span> to Zoom, Meet, Teams, OBS<br>
+            first word in <span class="hi-o">~1 second</span><br>
+            streams word by word
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COMPARISON -->
+<section class="compare-section" aria-labelledby="cmp-h">
+  <div class="container">
+    <div class="section-head fade-up">
+      <span class="kicker">ZeroLagAI vs cloud tools</span>
+      <h2 id="cmp-h">An honest side-by-side.</h2>
+      <p>There are cloud-based interview assistants already on the market. Here is what the comparison actually looks like.</p>
+    </div>
+    <div class="fade-up" style="overflow-x:auto;">
+      <table class="compare-table" role="table">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col" class="col-us">ZeroLagAI</th>
+            <th scope="col" class="col-them">Cloud-based tools</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Speed</td>
+            <td class="col-us"><span class="win">~1 second</span> from question end to first answer word. No server round-trip per request.</td>
+            <td class="col-them">Network latency on every request. Gets worse under load or weak wifi.</td>
+          </tr>
+          <tr>
+            <td>Input modes</td>
+            <td class="col-us"><span class="win">Voice, screenshot, manual typing, and prep notes.</span> Four input modes, one app.</td>
+            <td class="col-them">Voice only. If the problem is on screen, you are on your own.</td>
+          </tr>
+          <tr>
+            <td>Context</td>
+            <td class="col-us"><span class="win">Load your own Markdown file.</span> Your prep notes applied to every answer.</td>
+            <td class="col-them">Generic answers only. No way to load your preparation or role-specific notes.</td>
+          </tr>
+          <tr>
+            <td>Reliability</td>
+            <td class="col-us"><span class="win">Not dependent</span> on a remote connection holding for the full interview hour.</td>
+            <td class="col-them">Reports of dropped or unresponsive speech detection mid-interview.</td>
+          </tr>
+          <tr>
+            <td>Privacy</td>
+            <td class="col-us"><span class="win">Audio and screen on your machine.</span> Only the final LLM call leaves your device.</td>
+            <td class="col-them">Audio and screen content routed through a third-party cloud server.</td>
+          </tr>
+          <tr>
+            <td>Price</td>
+            <td class="col-us"><span class="win">From $20/mo.</span> Choose a light plan or go unlimited.</td>
+            <td class="col-them">Up to $150/mo for unlimited. Credit-hour pricing that's hard to predict mid-session.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<section class="price-section" id="pricing" aria-labelledby="price-h">
+  <div class="container">
+    <div class="section-head center fade-up">
+      <span class="kicker">Early access pricing</span>
+      <h2 id="price-h">Simple, honest pricing.</h2>
+      <p>Pick what fits how often you're interviewing. No credit gymnastics either way.</p>
+    </div>
+    <div class="price-grid fade-up">
+
+      <!-- Starter -->
+      <div class="price-card">
+        <span class="price-badge">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M5.5 1L6.9 4.1H10.3L7.5 6L8.6 9.2L5.5 7.3L2.4 9.2L3.5 6L0.7 4.1H4.1L5.5 1Z" fill="currentColor"/></svg>
+          Early Access
+        </span>
+        <p class="price-name">Starter</p>
+        <div class="price-row">
+          <span class="price-was" aria-label="Was $30">$30</span>
+          <span class="price-now" aria-label="Now $20">$20</span>
+          <span class="price-period">/ month</span>
+        </div>
+        <p class="price-tagline">
+          10 sessions included. <strong>About $2 per interview.</strong>
+          A good fit if you interview occasionally.
+        </p>
+        <ul class="price-feats">
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            10 sessions per month
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Automatic voice listening, no button to press
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Screenshot capture for coding, SQL, and system design
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Load your own Markdown reference file
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Mac and Windows. Cancel anytime.
+          </li>
+        </ul>
+        <a class="btn btn-outline" href="#signup">Join the waitlist</a>
+        <p class="price-session-note">No payment required to join.</p>
+      </div>
+
+      <!-- Unlimited -->
+      <div class="price-card featured">
+        <span class="price-badge pop">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M5.5 1L6.9 4.1H10.3L7.5 6L8.6 9.2L5.5 7.3L2.4 9.2L3.5 6L0.7 4.1H4.1L5.5 1Z" fill="currentColor"/></svg>
+          Most popular
+        </span>
+        <p class="price-name">Unlimited</p>
+        <div class="price-row">
+          <span class="price-was" aria-label="Was $49">$49</span>
+          <span class="price-now" aria-label="Now $39">$39</span>
+          <span class="price-period">/ month</span>
+        </div>
+        <p class="price-tagline">
+          <strong>Unlimited sessions.</strong> For an active job search where you interview every week and can't afford to count sessions.
+        </p>
+        <ul class="price-feats">
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Unlimited sessions (fair use)
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Everything in Starter
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            No per-session anxiety during a busy search
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Full session history across all interviews
+          </li>
+          <li>
+            <span class="chk" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Mac and Windows. Cancel anytime.
+          </li>
+        </ul>
+        <a class="btn btn-cta" href="#signup">Join the waitlist</a>
+        <p class="price-session-note">No payment required to join.</p>
+      </div>
+
+    </div>
+    <p class="price-fair-use">Compare that to $13 per credit-hour with cloud tools, or up to $150/mo for their unlimited plan.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section class="faq-section" id="faq" aria-labelledby="faq-h">
+  <div class="container">
+    <div class="section-head center fade-up">
+      <span class="kicker">FAQ</span>
+      <h2 id="faq-h">The questions most people ask first.</h2>
+    </div>
+    <div class="faq-list fade-up" role="list">
+
+      <div class="faq-item open" role="listitem">
+        <button class="faq-q" aria-expanded="true">
+          Is this cheating?
+          <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="faq-a">That is a question worth sitting with, and only you can answer it. Most people use ZeroLagAI as a safety net, not a shortcut. You still have to know what you are talking about when the interviewer pushes back or asks a follow-up. What it removes is the blank moment when a nervous system refuses to cooperate. Whether that is cheating is your call. It is not a substitute for preparation.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false">
+          Can my interviewer see the overlay?
+          <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="faq-a">No, and this is not a workaround or a trick. ZeroLagAI uses the operating system's native screen protection API, the same one used by banking apps and password managers to prevent their windows from being captured. Zoom, Google Meet, Teams, and OBS are excluded at the OS level. The overlay appears only on your physical display, not in any recording or screen share.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false">
+          What goes through a server and what stays on my machine?
+          <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="faq-a">Audio transcription runs locally on your machine. Screen captures are analyzed locally. Your Markdown reference file never leaves your device. The only outbound request is the final prompt to the language model that generates your answer. That is unavoidable since the LLM lives in the cloud, but everything before it stays on your hardware.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false">
+          How does the reference file work exactly?
+          <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="faq-a">Load any Markdown file before the interview. Your Java prep guide, system design notes, company research, or a custom cheatsheet. ZeroLagAI reads the full file and applies it as context for every answer in the session. Load a different file for each role or company.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false">
+          What's the difference between Starter and Unlimited?
+          <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="faq-a">Starter includes 10 sessions a month, about $2 each. A good fit if you interview occasionally. Unlimited is built for an active search with interviews most weeks, with fair use applying so the plan stays sustainable for everyone. One session covers one interview, up to 60 minutes.
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-q" aria-expanded="false">
+          Which platforms and operating systems does it support?
+          <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <div class="faq-a">ZeroLagAI is a desktop app for Mac and Windows. It works alongside any video call platform: Zoom, Google Meet, Microsoft Teams, or anything else. Nothing is required on the interviewer's side.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SIGNUP -->
+<section class="signup-section" id="signup" aria-labelledby="signup-h">
+  <div class="container">
+    <div class="signup-center fade-up">
+      <div class="section-head center">
+        <span class="kicker">Early access</span>
+        <h2 id="signup-h">Your next interview could go differently.</h2>
+        <p>Access opens in small batches. Drop your email and we'll reach out when it's your turn. No payment, no commitment.</p>
+      </div>
+
+      <form class="signup-form" id="signup-form" novalidate>
+        <label for="email-input" class="sr-only">Email address</label>
+        <input
+          type="email"
+          id="email-input"
+          name="email"
+          placeholder="your@email.com"
+          autocomplete="email"
+          required
+          aria-describedby="form-status"
+        >
+        <label for="message-input" class="sr-only">Message or question (optional)</label>
+        <textarea
+          id="message-input"
+          name="message"
+          placeholder="Any questions, feedback, or just say hi. Completely optional."
+          aria-label="Message or question"
+          rows="3"
+        ></textarea>
+        <button type="submit" class="btn btn-cta">Join waitlist</button>
+      </form>
+      <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+
+      <div class="signup-success" id="signup-success" role="status" aria-live="polite">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--grn);flex-shrink:0">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M7.5 12L11 15.5L16.5 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <strong>You are on the list.</strong>
+          <span id="success-copy">We will email you as soon as access opens up.</span>
+        </div>
+      </div>
+
+      <div class="signup-trust">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7L5.5 10.5L12 4" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          No payment now
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7L5.5 10.5L12 4" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          No spam, ever
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7L5.5 10.5L12 4" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Cancel anytime
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site" role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <a class="logo" href="#top" aria-label="ZeroLagAI home">
+          <div class="logo-mark" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 12L8 3.5L12 12" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.5 9H10.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          Zero<span class="hl">Lag</span>AI
+        </a>
+        <p class="footer-tagline">A local-first interview copilot. Built by dsbuilds.dev.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="mailto:satulurideepak4@gmail.com">Contact</a>
+        <a href="https://dsbuilds.dev" target="_blank" rel="noopener">dsbuilds.dev</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 ZeroLagAI. All rights reserved.</span>
+      <span>Built and used in real interviews before opening to others.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* GIF loader: plain img tags so they animate */
+(function () {
+  function loadGif(src, frameId, loaderId) {
+    var frame  = document.getElementById(frameId);
+    var loader = document.getElementById(loaderId);
+    if (!frame) return;
+
+    var img = document.createElement('img');
+    img.alt = '';
+    img.style.cssText = 'width:100%;height:auto;display:block;';
+
+    img.onload = function () {
+      if (loader) loader.style.display = 'none';
+      frame.appendChild(img);
+    };
+    img.onerror = function () {
+      if (loader) {
+        loader.innerHTML = '<span style="font-size:24px;">&#128247;</span><span style="font-size:12px;">Demo recording coming soon</span>';
+      }
+    };
+
+    img.src = src;
+  }
+
+  loadGif('assets/voice-interview.gif', 'gif-frame-1', 'gif-load-1');
+  loadGif('assets/loadmd-file.gif',     'gif-frame-2', 'gif-load-2');
+}());
+
+/* FAQ accordion */
+(function () {
+  var items = document.querySelectorAll('.faq-item');
+
+  items.forEach(function (item) {
+    var btn = item.querySelector('.faq-q');
+    if (!btn) return;
+
+    btn.addEventListener('click', function () {
+      var isOpen = item.classList.contains('open');
+
+      items.forEach(function (i) {
+        i.classList.remove('open');
+        var b = i.querySelector('.faq-q');
+        if (b) b.setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+}());
+
+/* Scroll fade-in */
+(function () {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.fade-up').forEach(function (el) {
+      el.classList.add('visible');
+    });
+    return;
+  }
+
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(function (el) {
+    obs.observe(el);
+  });
+}());
+
+/* Waitlist form: Google Sheets integration
+ *
+ * SETUP (one-time, 5 minutes):
+ * 1. Open your Google Sheet → Extensions → Apps Script
+ * 2. Paste this entire script and save:
+ *
+ *    function doPost(e) {
+ *      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+ *      var data  = JSON.parse(e.postData.contents);
+ *      sheet.appendRow([
+ *        new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'}),
+ *        data.email,
+ *        data.message || ''
+ *      ]);
+ *      return ContentService
+ *        .createTextOutput(JSON.stringify({status:'ok'}))
+ *        .setMimeType(ContentService.MimeType.JSON);
+ *    }
+ *
+ * 3. Click Deploy → New deployment → Web app
+ *    - Execute as: Me
+ *    - Who has access: Anyone
+ * 4. Copy the Web app URL and paste it below as SHEET_URL
+ */
+(function () {
+  var SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+
+  var form    = document.getElementById('signup-form');
+  var input   = document.getElementById('email-input');
+  var msgEl   = document.getElementById('message-input');
+  var status  = document.getElementById('form-status');
+  var success = document.getElementById('signup-success');
+  var scopy   = document.getElementById('success-copy');
+
+  function setStatus(msg, cls) {
+    status.textContent = msg || '';
+    status.className = 'form-status' + (cls ? ' ' + cls : '');
+  }
+
+  function validEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  function showSuccess(email) {
+    form.hidden = true;
+    setStatus('');
+    scopy.textContent = 'We will email ' + email + ' when access opens.';
+    success.classList.add('show');
+  }
+
+  try {
+    var saved = localStorage.getItem('zlai_waitlist');
+    if (saved) showSuccess(saved);
+  } catch (_) {}
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email   = input.value.trim();
+    var message = msgEl ? msgEl.value.trim() : '';
+
+    if (!validEmail(email)) {
+      setStatus('Please enter a valid email address.', 'error');
+      input.focus();
+      return;
+    }
+
+    var btn = form.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    setStatus('');
+
+    var payload = JSON.stringify({ email: email, message: message });
+
+    if (SHEET_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+      /* No URL set yet: save locally and show success so you can test the UI */
+      setTimeout(function () {
+        try { localStorage.setItem('zlai_waitlist', email); } catch (_) {}
+        showSuccess(email);
+      }, 500);
+      return;
+    }
+
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    })
+    .then(function () {
+      try { localStorage.setItem('zlai_waitlist', email); } catch (_) {}
+      showSuccess(email);
+    })
+    .catch(function () {
+      btn.disabled = false;
+      btn.textContent = 'Join waitlist';
+      setStatus('Something went wrong. Please try again.', 'error');
+    });
+  });
+}());
+</script>
+
+</body>
+</html>
