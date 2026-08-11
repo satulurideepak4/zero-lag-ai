@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZeroLagAI: Local-first AI coaching for technical interview preparation</title>
-  <meta name="description" content="ZeroLagAI is a production-ready desktop AI coaching platform for technical interview preparation. It combines local speech processing, screen context, personal knowledge files, and low-latency AI assistance powered by Claude (Anthropic) and Azure OpenAI on Mac and Windows.">
+  <meta name="description" content="ZeroLagAI is a production-ready desktop AI coaching platform built on Azure OpenAI Service (GPT-5.6-terra) and Claude (Anthropic). It combines local speech processing, screen context, and personal knowledge files to deliver low-latency AI coaching on Mac and Windows.">
   <link rel="canonical" href="https://dsbuilds.dev">
   <meta property="og:title" content="ZeroLagAI: Private, low-latency AI coaching for technical interviews">
   <meta property="og:description" content="A production-ready desktop AI coach with local speech processing, screen understanding, personal knowledge context, and fast multimodal AI assistance powered by Claude and Azure OpenAI.">
@@ -20,7 +20,8 @@
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "macOS, Windows",
       "url": "https://dsbuilds.dev",
-      "description": "Production-ready desktop AI coaching software for technical interview preparation. Powered by Claude (Anthropic API) and Azure OpenAI (GPT-5.6) for high-quality, context-aware coaching responses.",
+      "description": "Production-ready desktop AI coaching software for technical interview preparation. Powered by Azure OpenAI Service (GPT-5.6-terra deployed via Azure AI Foundry) and Claude (Anthropic API) for high-quality, context-aware coaching responses.",
+      "keywords": "Azure OpenAI, Azure AI Foundry, GPT-5.6, interview preparation, AI coaching, desktop application",
       "dateCreated": "2025",
       "offers": [
         {"@type":"Offer","name":"Starter","price":"20","priceCurrency":"USD","category":"subscription"},
@@ -579,6 +580,16 @@
       .step-row { grid-template-columns: 48px 1fr; gap: 16px; }
       .demo-gif-frame { height: 240px; }
     }
+    /* AZURE SECTION */
+    .azure-section { background: #EFF6FF; border-top: 2px solid #0078D4; border-bottom: 2px solid #0078D4; padding: 40px 0; }
+    .azure-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+    .azure-left { display: flex; align-items: center; gap: 16px; }
+    .azure-logo { width: 44px; height: 44px; background: #0078D4; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .azure-text h3 { font-size: 17px; font-weight: 700; color: #0C447C; margin-bottom: 4px; }
+    .azure-text p { font-size: 13px; color: #185FA5; line-height: 1.6; max-width: 52ch; }
+    .azure-services { display: flex; flex-wrap: wrap; gap: 8px; }
+    .azure-pill { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1.5px solid #B5D4F4; color: #0C447C; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
+
     @media (prefers-reduced-motion: reduce) {
       * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
       html { scroll-behavior: auto; }
@@ -779,6 +790,32 @@
     </div>
   </div>
 
+  <!-- BUILT ON AZURE SECTION -->
+  <div class="azure-section">
+    <div class="container">
+      <div class="azure-inner">
+        <div class="azure-left">
+          <div class="azure-logo" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="2" y="2" width="10" height="10" rx="1" fill="white"/><rect x="14" y="2" width="10" height="10" rx="1" fill="white"/><rect x="2" y="14" width="10" height="10" rx="1" fill="white"/><rect x="14" y="14" width="10" height="10" rx="1" fill="white"/></svg>
+          </div>
+          <div class="azure-text">
+            <h3>Built on Microsoft Azure</h3>
+            <p>ZeroLagAI uses Azure OpenAI Service for GPT-5.6-terra inference, deployed via Azure AI Foundry. All API calls are billed through Azure, giving enterprise-grade reliability and compliance with sub-second streaming latency.</p>
+          </div>
+        </div>
+        <div class="azure-services">
+          <span class="azure-pill">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="0.5" y="0.5" width="4.5" height="4.5" rx="0.5" fill="#0078D4"/><rect x="7" y="0.5" width="4.5" height="4.5" rx="0.5" fill="#0078D4"/><rect x="0.5" y="7" width="4.5" height="4.5" rx="0.5" fill="#0078D4"/><rect x="7" y="7" width="4.5" height="4.5" rx="0.5" fill="#0078D4"/></svg>
+            Azure OpenAI Service
+          </span>
+          <span class="azure-pill">Azure AI Foundry</span>
+          <span class="azure-pill">GPT-5.6-terra</span>
+          <span class="azure-pill">Global Standard deployment</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TRACTION STRIP -->
   <div class="traction-strip">
     <div class="container">
@@ -804,8 +841,8 @@
         </div>
         <div class="traction-divider"></div>
         <div class="traction-stat">
-          <div class="num" style="font-size:18px;">Claude + GPT</div>
-          <div class="label">Anthropic + Azure OpenAI</div>
+          <div class="num" style="font-size:14px;">Azure OpenAI</div>
+          <div class="label">GPT-5.6-terra via AI Foundry</div>
         </div>
       </div>
     </div>
@@ -858,10 +895,10 @@
           <h3>Commercial offering</h3>
           <p>Starter and Unlimited subscription plans are live via Gumroad. Payments are processed securely and access is delivered automatically after checkout.</p>
         </div>
-        <div class="operational-card fade-up">
-          <span class="status">&#9679; Multi-model AI</span>
-          <h3>Claude + Azure OpenAI</h3>
-          <p>ZeroLagAI integrates both the Anthropic Claude API and Azure OpenAI (GPT-5.6) for inference. Local preprocessing keeps latency under one second before the final prompt reaches the model.</p>
+        <div class="operational-card fade-up" style="border-color: rgba(0,120,212,0.3); background: #EFF6FF;">
+          <span class="status" style="background: rgba(0,120,212,0.1); color: #0078D4; border-color: rgba(0,120,212,0.25);">&#9679; Azure AI Foundry</span>
+          <h3>Azure OpenAI Service</h3>
+          <p>GPT-5.6-terra is deployed via Azure AI Foundry under a Global Standard deployment. Azure startup credits cover all inference costs. No separate model access request required for GPT-5.6-terra on Azure.</p>
         </div>
       </div>
     </div>
@@ -1050,10 +1087,11 @@
             <div class="step-circle">3</div>
           </div>
           <div class="step-body">
-            <h3>Frontier AI streams focused guidance into the desktop overlay</h3>
-            <p>The assembled context, your question, your notes, and optional screenshots, is sent to either Claude (Anthropic) or GPT-5.6 (Azure OpenAI) for inference. The first word appears in about a second. Guidance streams word by word into a lightweight desktop overlay so you can review explanations and structure your response without breaking focus.</p>
+            <h3>Azure OpenAI Service streams focused guidance into the desktop overlay</h3>
+            <p>The assembled context, your question, your notes, and optional screenshots, is sent to Azure OpenAI Service (GPT-5.6-terra, deployed on Azure AI Foundry) or Claude (Anthropic API) for inference. The first word appears in about a second. Guidance streams word by word into a lightweight desktop overlay so you can review explanations and structure your response without breaking focus.</p>
             <span class="step-chip">
-              <span class="hi-a">Claude API</span> or <span style="color:var(--msft);font-weight:700;">Azure OpenAI</span> for inference<br>
+              <span style="color:var(--msft);font-weight:700;">Azure OpenAI Service</span> (GPT-5.6-terra)<br>
+              <span class="hi-a">Claude API</span> (Anthropic) as secondary<br>
               <span class="hi-g">local-first</span> preprocessing keeps latency low<br>
               first word in <span class="hi-o">~1 second</span>, streams word by word
             </span>
@@ -1187,7 +1225,7 @@
           <span class="kicker">Founder &amp; builder</span>
           <h2 id="founder-h">Satuluri Deepak</h2>
           <div class="founder-role">Founder &amp; Software Engineer, ZeroLagAI &middot; dsbuilds.dev</div>
-          <p>ZeroLagAI is independently built and operated by Satuluri Deepak, a Senior Backend Engineer with 4+ years of experience building production API infrastructure for banks including EWB, RCBC, and Tonik. ZeroLagAI is a deliberate, real-use product built to solve a problem the founder experienced firsthand: getting fast, context-aware guidance during high-pressure technical interviews. The product integrates frontier AI models via the Claude API (Anthropic) and Azure OpenAI (GPT-5.6), using a local-first architecture to keep latency under one second. Support, onboarding, and product questions are handled directly by the founder.</p>
+          <p>ZeroLagAI is independently built and operated by Satuluri Deepak, a Senior Backend Engineer with 4+ years of experience building production API infrastructure for banks including EWB, RCBC, and Tonik. ZeroLagAI is a deliberate, real-use product built to solve a problem the founder experienced firsthand: getting fast, context-aware guidance during high-pressure technical interviews. The product is built on Azure OpenAI Service (GPT-5.6-terra, deployed via Azure AI Foundry) with Claude (Anthropic API) as a secondary provider, using a local-first architecture to keep latency under one second. All Azure OpenAI inference is billed through the Azure subscription. Support, onboarding, and product questions are handled directly by the founder.</p>
           <div class="founder-links">
             <a href="https://github.com/satulurideepak4" target="_blank" rel="noopener noreferrer">GitHub &#8599;</a>
             <a href="https://linkedin.com/in/satuluri-deepak-69227a1a1" target="_blank" rel="noopener noreferrer">LinkedIn &#8599;</a>
@@ -1288,7 +1326,7 @@
             Which AI model does ZeroLagAI use?
             <span class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </button>
-          <div class="faq-a">ZeroLagAI integrates two frontier AI providers: Claude via the Anthropic API and GPT-5.6 via Azure OpenAI. Both are chosen for instruction-following quality, low-latency streaming, and the ability to apply personal reference material accurately across multi-turn sessions. The local preprocessing pipeline (audio transcription, screen analysis) runs on your device. Only the final assembled prompt is sent to the model for inference.</div>
+          <div class="faq-a">ZeroLagAI's primary inference provider is Azure OpenAI Service (GPT-5.6-terra, deployed via Azure AI Foundry). Claude via the Anthropic API is integrated as a secondary provider. Both models support instruction-following, low-latency streaming, and the ability to apply personal reference material across multi-turn sessions. All audio transcription and screen analysis runs locally on your device. Only the final assembled prompt is sent to Azure OpenAI Service for inference.</div>
         </div>
 
         <div class="faq-item" role="listitem">
@@ -1340,7 +1378,7 @@
       <div class="legal-grid">
         <article class="legal-card fade-up" id="privacy">
           <h3>Privacy</h3>
-          <p>ZeroLagAI follows a local-first design. Audio and screen processing are performed on the user's device where supported by the product workflow. Content required for an AI response may be sent to Claude (Anthropic API) or Azure OpenAI (Microsoft) for inference.</p>
+          <p>ZeroLagAI follows a local-first design. Audio and screen processing are performed on the user's device. Content required for an AI response is sent to Azure OpenAI Service (Microsoft Azure) or Claude (Anthropic API) for inference. Azure OpenAI Service is the primary inference provider, deployed via Azure AI Foundry on Global Standard infrastructure.</p>
           <ul>
             <li>We do not sell customer personal information.</li>
             <li>Business email is used for purchase communication, onboarding, and support.</li>
@@ -1416,7 +1454,7 @@
         <p class="footer-tagline">A local-first AI coaching platform for technical interview preparation. Built by dsbuilds.dev. Founded 2025.</p>
         <p class="footer-claude-note">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 6L5.5 8L8.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Powered by Claude (Anthropic) &amp; Azure OpenAI (GPT-5.6)
+          Built on Azure OpenAI Service (GPT-5.6-terra) &amp; Claude (Anthropic)
         </p>
       </div>
       <nav class="footer-links" aria-label="Footer navigation">
@@ -1430,7 +1468,7 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2025 ZeroLagAI. All rights reserved.</span>
-      <span>Built and operated by Satuluri Deepak &middot; admin@dsbuilds.dev &middot; Claude + Azure OpenAI</span>
+      <span>Built and operated by Satuluri Deepak &middot; admin@dsbuilds.dev &middot; Azure OpenAI Service + Claude</span>
     </div>
   </div>
 </footer>
